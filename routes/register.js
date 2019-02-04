@@ -35,14 +35,14 @@ router.post('/', (req, res) => {
         // Storing salted hashes to make the application more secure
 
         let salt = crypto.randomBytes(32).toString("hex");
-        let salted_hash = gethash(password, salt);
+        let salted_hash = getHash(password, salt);
 
         //Use .none(). since we wont be getting anything returned from the INSERT statement in SQL
         // Also use placeholders to avoid SQL injection i.e. ($1, $2, $3)
 
         let params = [first, last, username, email, salted_hash, salt];
 
-        db.none("INSERT INTO MEMBERS(FirstName, LastName, Username, Email, Password, Salt) VALUES ($1, $2, $3, $4, $5, $6)", params)
+        db.none("INSERT INTO MEMBERS(FirstName, LastName, Username, Email, Password, SALT) VALUES ($1, $2, $3, $4, $5, $6)", params)
         .then(() => {
             //We successfully added the user, let the user know
             res.send({
