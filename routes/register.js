@@ -40,6 +40,8 @@ router.post('/', (req, res) => {
         //Use .none(). since we wont be getting anything returned from the INSERT statement in SQL
         // Also use placeholders to avoid SQL injection i.e. ($1, $2, $3)
 
+        let params = [first, last, username, email, salted_hash, salt];
+
         db.none("INSERT INTO MEMBERS(FirstName, LastName, Username, Email, Password, Salt) VALUES ($1, $2, $3, $4, $5, $6)", params)
         .then(() => {
             //We successfully added the user, let the user know
