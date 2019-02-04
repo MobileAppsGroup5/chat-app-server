@@ -63,7 +63,7 @@ router.post('/', (req, res) => {
         res.send({
             success: false,
             input: req.body,
-            error: "Missing required user informatioN"
+            error: "Missing required user information"
         });
     }
 });
