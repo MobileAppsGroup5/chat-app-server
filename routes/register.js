@@ -48,7 +48,7 @@ router.post('/', (req, res) => {
             res.send({
                 success: true
             });
-            sendMail("tcsschapp450@gmail.com", email, "WELCOME!", "<h1>WELCOME TO CHAPP</h1>")
+            sendVerificationEmail(email);
         }).catch((err) => {
             //log the error
             console.log(err);

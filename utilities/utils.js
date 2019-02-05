@@ -6,23 +6,23 @@ const crypto = require("crypto");
 
 //To do. modularize this section @BIGMIKE. just an example.
 
-function sendMail(from, receiver, subj, message) {
+function sendVerificationEmail(email) {
 
-    var nodemailer = require('nodemailer');
+let nodemailer = require('nodemailer');
 
 // Burner gmail account, need to store password in .env. To do later.
-var transporter = nodemailer.createTransport({
+let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'tcsschapp450@gmail.com',
-        pass: 'Tcss450!'
+        pass: process.env.EMAIL_PASSWORD,
     }
 });
 
-var mailOptions = {
+let mailOptions = {
     from: 'tcsschapp450@gmail.com',
-    to: 'trungt@uw.edu',
-    subject: 'Sending email using Node.js',
+    to: email,
+    subject: 'Verify your account with Chapp',
     html: '<h1>WELCOME TO CHAPP!</h1><p>That was pretty cool!</p>'
 }
 
