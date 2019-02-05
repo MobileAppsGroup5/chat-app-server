@@ -9,7 +9,7 @@ let db = require('../utilities/utils').db;
 
 let getHash = require('../utilities/utils').getHash;
 
-let sendMail = require('../utilities/utils').sendMail;
+let sendVerificationEmail = require('../utilities/email').sendVerificationEmail;
 
 var router = express.Router();
 
