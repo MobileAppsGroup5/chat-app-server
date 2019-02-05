@@ -1,6 +1,6 @@
 let jwt = require('jsonwebtoken');
 let config = {
-    secret: process.env.JSON_WEB_TOKEN
+  secret: process.env.JSON_WEB_TOKEN
 };
 
 let checkToken = (req, res, next) => {
@@ -9,8 +9,8 @@ let checkToken = (req, res, next) => {
 
   if (token) {
     if (token.startsWith('Bearer ')) {
-        // Remove Bearer from string
-        token = token.slice(7, token.length);
+      // Remove Bearer from string
+      token = token.slice(7, token.length);
     }
 
     jwt.verify(token, config.secret, (err, decoded) => {

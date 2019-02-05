@@ -8,31 +8,31 @@ const crypto = require("crypto");
 
 function sendVerificationEmail(email) {
 
-let nodemailer = require('nodemailer');
+  let nodemailer = require('nodemailer');
 
-// Burner gmail account, need to store password in .env. To do later.
-let transporter = nodemailer.createTransport({
+  // Burner gmail account, need to store password in .env. To do later.
+  let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'tcsschapp450@gmail.com',
-        pass: process.env.EMAIL_PASSWORD,
+      user: 'tcsschapp450@gmail.com',
+      pass: process.env.EMAIL_PASSWORD,
     }
-});
+  });
 
-let mailOptions = {
+  let mailOptions = {
     from: 'tcsschapp450@gmail.com',
     to: email,
     subject: 'Verify your account with Chapp',
     html: '<h1>WELCOME TO CHAPP!</h1><p>That was pretty cool!</p>'
-}
+  }
 
-transporter.sendMail(mailOptions, function(error, info) {
+  transporter.sendMail(mailOptions, function(error, info) {
     if (error) {
-        console.log(error);
+      console.log(error);
     } else {
-        console.log('Email sent: ' + info.response);
+      console.log('Email sent: ' + info.response);
     }
-})
+  })
 
 }
 
@@ -43,15 +43,12 @@ transporter.sendMail(mailOptions, function(error, info) {
  * @param {string} salt the salt to use when hashing
  */
 
- function getHash(pw, salt) {
-     return crypto.createHash("sha256").update(pw + salt).digest("hex");
- }
-
-
-
-
-
+function getHash(pw, salt) {
+  return crypto.createHash("sha256").update(pw + salt).digest("hex");
+}
 
 module.exports = {
-    db, getHash, sendMail
+  db,
+  getHash,
+  sendMail
 };
