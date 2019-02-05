@@ -8,9 +8,8 @@ function sendVerificationEmail(email) {
     .then(ret => {
       salt = ret['salt'];
 
-      let user_verify_url = process.env.VERIFY_URL + '/params?salt=' + salt;
+      let user_verify_url = process.env.VERIFY_URL + '?salt=' + salt;
 
-      console.log(salt);
       let email_body = '<h2>Chapp</h2><p>Please click the following link to \
       verify your account. If you did not register for Chapp please disregard \
       this email.</p><a href=\'' + user_verify_url + '\'>' + user_verify_url + '</a>';

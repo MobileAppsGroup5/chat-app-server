@@ -20,7 +20,7 @@ router.post('/', (req, res) => {
 
     if(email && theirPw) {
         //Using the 'one' method means that only one row should be returned
-        db.one('SELECT Password, Salt FROM Members WHERE Email=$1', [email])
+        db.one('SELECT Password, Salt FROM Members WHERE Email=$1 and verification=1', [email])
         .then(row => {  // If successful, run function passed into .then()
             let salt = row['salt'];
             //Retrieve our copy of the password
@@ -56,6 +56,7 @@ router.post('/', (req, res) => {
         //More than one row shouldn't be found, since table has constraint on it
         .catch((err) => {
             //If anything happened, it wasn't successful
+            console.log(err);
             res.send({
                 success: false,
                 message: err
