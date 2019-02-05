@@ -13,7 +13,7 @@ app.use('/login', require('./routes/login.js'));
 
 app.use('/register', require('./routes/register.js'));
 
-
+app.use('/userverification', require('./routes/verify.js'));
 
 /*
  * Return HTML for the / end point.

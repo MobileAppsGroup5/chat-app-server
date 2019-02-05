@@ -1,1 +1,37 @@
-// Placeholder for what will be the verification endpoint
+//express is the framework we're going to use to handle requests
+const express = require('express');
+
+//Create connection to Heroku Database
+let db = require('../utilities/utils').db;
+
+var router = express.Router();
+
+router.get('/', (req, res) => {
+  let salt = req.query['salt'];
+  if (salt) {
+    db.none('UPDATE Members SET verification = 1 WHERE salt = $1', [salt])
+      .then(() => { // If successful, run function passed into .then()
+        res.send({
+          success: true,
+          message: 'Successfully verified.',
+        })
+      })
+      //More than one row shouldn't be found, since table has constraint on it
+      .catch((err) => {
+        //If anything happened, it wasn't successful
+        res.send({
+          success: false,
+          message: err
+        });
+      });
+  } else {
+    res.send({
+      success: false,
+      message: 'Incorrect Query',
+    })
+  }
+});
+
+
+
+module.exports = router;
