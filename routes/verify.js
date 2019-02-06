@@ -13,7 +13,11 @@ router.get('/', (req, res) => {
       .then(() => { // If successful, run function passed into .then()
         res.send({
           success: true,
-          message: 'Successfully verified.',
+          message: '\
+          <div align="center">\
+            <h1>Chapp</h1>\
+            <p>Email successfully verified!</p>\
+          </div>',
         })
       })
       //More than one row shouldn't be found, since table has constraint on it

@@ -17,64 +17,74 @@ router.use(bodyParser.json());
 let jwt = require('jsonwebtoken');
 
 let config = {
-    secret: process.env.JSON_WEB_TOKEN
+  secret: process.env.JSON_WEB_TOKEN
 };
 
 router.post('/', (req, res) => {
-    let email = req.body['email'];
-    let theirPw = req.body['password'];
-    let wasSuccessful = false;
+  let email = req.body['email'];
+  let theirPw = req.body['password'];
+  let wasSuccessful = false;
 
-    if(email && theirPw) {
-        //Using the 'one' method means that only one row should be returned
-        db.one('SELECT Password, Salt FROM Members WHERE Email=$1 and verification=1', [email])
-        .then(row => {  // If successful, run function passed into .then()
-            let salt = row['salt'];
-            //Retrieve our copy of the password
-            let ourSaltedHash = row['password'];
+  if (email && theirPw) {
+    //Using the 'one' method means that only one row should be returned
+    db.one('SELECT Password, Salt, verification FROM Members WHERE Email=$1', [email])
+      .then(row => { // If successful, run function passed into .then()
+        let salt = row['salt'];
+        //Retrieve our copy of the password
+        let ourSaltedHash = row['password'];
 
-            //Combined their password with our salt, then hash
-            let theirSaltedHash = getHash(theirPw, salt);
+        //Combined their password with our salt, then hash
+        let theirSaltedHash = getHash(theirPw, salt);
 
-            //Did our salt hash match their salted hash?
-            let wasCorrectPw = ourSaltedHash == theirSaltedHash;
+        //Did our salt hash match their salted hash?
+        let wasCorrectPw = ourSaltedHash == theirSaltedHash;
 
-            if (wasCorrectPw) {
-                // credentials match. get a new JWT
-                let token = jwt.sign({username:email},
-                    config.secret,
-                    {
-                        expiresIn: '24h' // expires in 24 hours
-                    }
-                );
-                //package and send the results
-                res.json({
-                    success: true,
-                    message: 'Authentication successful!',
-                    token: token
-                });
-            } else {
-                //credentials did not match
-                res.send({
-                    success: false
-                });
-            }
-        })
-        //More than one row shouldn't be found, since table has constraint on it
-        .catch((err) => {
-            //If anything happened, it wasn't successful
-            console.log(err);
-            res.send({
-                success: false,
-                message: err
+        if (wasCorrectPw) {
+          if (row['verification'] == 1) {
+            // credentials match and user is verified. get a new JWT
+
+            let token = jwt.sign({
+                username: email
+              },
+              config.secret, {
+                expiresIn: '24h' // expires in 24 hours
+              }
+            );
+            // package and send the results
+            res.json({
+              success: true,
+              message: 'Authentication successful!',
+              token: token
             });
-        });
-    } else {
-        res.send({
+          } else {
+            // user has not verified
+            res.send({
+              success: false,
+              message: 'User not verified',
+            })
+          }
+        } else {
+          // Account exists, but incorrect password
+          res.send({
             success: false,
-            message: 'missing credentials'
+            message: 'Incorrect password',
+          });
+        }
+      })
+      //More than one row shouldn't be found, since table has constraint on it
+      .catch((err) => {
+        //If anything happened, it wasn't successful
+        res.send({
+          success: false,
+          message: err
         });
-    }
+      });
+  } else {
+    res.send({
+      success: false,
+      message: 'Missing credentials'
+    });
+  }
 });
 
 module.exports = router;
