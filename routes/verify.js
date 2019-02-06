@@ -15,7 +15,6 @@ router.get('/', (req, res) => {
       .then(() => { // If successful, run function passed into .then()
         res.sendFile(path.join(__dirname+'/../pages/verify.html'));
       })
-      // More than one row shouldn't be found, since table has constraint on it
       .catch((err) => {
         //If anything happened, it wasn't successful
         res.send({

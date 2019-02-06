@@ -60,7 +60,7 @@ router.post('/', (req, res) => {
             // user has not verified
             res.send({
               success: false,
-              message: 'User not verified',
+              message: 'Account not verified',
             })
           }
         } else {
@@ -73,10 +73,10 @@ router.post('/', (req, res) => {
       })
       //More than one row shouldn't be found, since table has constraint on it
       .catch((err) => {
-        //If anything happened, it wasn't successful
+        // Email must not exist in the database
         res.send({
           success: false,
-          message: err
+          message: 'User does not exist'
         });
       });
   } else {

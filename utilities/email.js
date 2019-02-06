@@ -10,9 +10,11 @@ function sendVerificationEmail(email) {
 
       let user_verify_url = process.env.VERIFY_URL + '?salt=' + salt;
 
-      let email_body = '<h2>Chapp</h2><p>Please click the following link to \
-      verify your account. If you did not register for Chapp please disregard \
-      this email.</p><a href=\'' + user_verify_url + '\'>' + user_verify_url + '</a>';
+      let email_body = '\
+      <h2>Chapp</h2>\
+      <p>Please click the following link to verify your account. If you did not\
+      register for Chapp please disregard this email.</p>\
+      <a href=\'' + user_verify_url + '\'>' + user_verify_url + '</a>';
 
       let transporter = nodemailer.createTransport({
         service: 'gmail',
