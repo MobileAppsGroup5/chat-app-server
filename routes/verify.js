@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
       .then(() => { // If successful, run function passed into .then()
         res.send({
           success: true,
-          message: '\
+          html: '\
           <div align="center">\
             <h1>Chapp</h1>\
             <p>Email successfully verified!</p>\
