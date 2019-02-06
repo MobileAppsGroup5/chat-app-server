@@ -4,6 +4,8 @@ const express = require('express');
 //Create connection to Heroku Database
 let db = require('../utilities/utils').db;
 
+let path = require('path');
+
 var router = express.Router();
 
 router.get('/', (req, res) => {
@@ -11,16 +13,9 @@ router.get('/', (req, res) => {
   if (salt) {
     db.none('UPDATE Members SET verification = 1 WHERE salt = $1', [salt])
       .then(() => { // If successful, run function passed into .then()
-        res.send({
-          success: true,
-          html: '\
-          <div align="center">\
-            <h1>Chapp</h1>\
-            <p>Email successfully verified!</p>\
-          </div>',
-        })
+        res.sendFile(path.join(__dirname+'/../pages/verify.html'));
       })
-      //More than one row shouldn't be found, since table has constraint on it
+      // More than one row shouldn't be found, since table has constraint on it
       .catch((err) => {
         //If anything happened, it wasn't successful
         res.send({
