@@ -38,7 +38,7 @@ router.post('/', (req, res) => {
     let salted_hash = getHash(password, salt);
 
     // Generate random code for user Verification
-    let code = crpyto.randomBytes(32).toString("hex");
+    let code = crypto.randomBytes(32).toString("hex");
 
     //Use .none(). since we wont be getting anything returned from the INSERT statement in SQL
     // Also use placeholders to avoid SQL injection i.e. ($1, $2, $3)
