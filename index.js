@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
     //write a response to the client
     res.write('<h' + i + ' style="color:blue">CHAPP!!!</h' + i + '>');
   }
-  res.end(); //end the response
+  res.end(); //end the responseher
 });
 
 /*
