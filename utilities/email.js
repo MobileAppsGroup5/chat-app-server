@@ -4,11 +4,11 @@ let db = require('./utils').db;
 let nodemailer = require('nodemailer');
 
 function sendVerificationEmail(email) {
-  db.one('SELECT salt FROM Members WHERE email = \'' + email + '\'')
+  db.one('SELECT code FROM Members WHERE email = \'' + email + '\'')
     .then(ret => {
-      salt = ret['salt'];
+      code = ret['code'];
 
-      let user_verify_url = process.env.VERIFY_URL + '?salt=' + salt;
+      let user_verify_url = process.env.VERIFY_URL + '?email=' + email + '&code=' + code;
 
       let email_body = '\
       <h2>Chapp</h2>\

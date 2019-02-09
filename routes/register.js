@@ -37,12 +37,15 @@ router.post('/', (req, res) => {
     let salt = crypto.randomBytes(32).toString("hex");
     let salted_hash = getHash(password, salt);
 
+    // Generate random code for user Verification
+    let code = crpyto.randomBytes(32).toString("hex");
+
     //Use .none(). since we wont be getting anything returned from the INSERT statement in SQL
     // Also use placeholders to avoid SQL injection i.e. ($1, $2, $3)
 
-    let params = [first, last, username, email, salted_hash, salt];
+    let params = [first, last, username, email, salted_hash, salt, code];
 
-    db.none("INSERT INTO MEMBERS(FirstName, LastName, Username, Email, Password, SALT) VALUES ($1, $2, $3, $4, $5, $6)", params)
+    db.none("INSERT INTO MEMBERS(FirstName, LastName, Username, Email, Password, SALT, CODE) VALUES ($1, $2, $3, $4, $5, $6, $7)", params)
       .then(() => {
         //We successfully added the user, let the user know
         res.send({
