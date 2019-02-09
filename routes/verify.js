@@ -11,7 +11,7 @@ var router = express.Router();
 router.get('/', (req, res) => {
   let email = req.query['email'];
   let code = req.query['code'];
-  if (salt) {
+  if (email && code) {
     db.none('UPDATE Members SET verification = 1 WHERE email = $1 AND code = $2', [email, code])
       .then(() => { // If successful, run function passed into .then()
         res.sendFile(path.join(__dirname+'/../pages/verify.html'));
