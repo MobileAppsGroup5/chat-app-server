@@ -28,7 +28,12 @@ function sendVerificationEmail(email) {
         from: 'tcsschapp450@gmail.com',
         to: email,
         subject: 'Verify your account with Chapp',
-        html: email_body,
+        html: ({path: './../pages/verification_email.html'}),
+        attachments: [
+          {
+            path: './../pages/logo_transparent.png',
+          },
+        ];
       }
 
       transporter.sendMail(mailOptions, function(error, info) {
