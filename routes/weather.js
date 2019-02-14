@@ -2,6 +2,7 @@ const API_KEY = process.env.WEATHER_API_KEY;
 
 //Weather bit API = https://www.weatherbit.io/api/weather-forecast-16-day
 //https://www.weatherbit.io/api/weather-current
+//https://www.weatherbit.io/api/weather-forecast-48-hour
 
 //common parameters
 // only use one of the parameters below for receiving weather data
