@@ -15,6 +15,8 @@ app.use('/register', require('./routes/register.js'));
 
 app.use('/userverification', require('./routes/verify.js'));
 
+app.use('/weather', require('./routes/weather.js'));
+
 /*
  * Return HTML for the / end point.
  * This is a nice location to document your web service API
