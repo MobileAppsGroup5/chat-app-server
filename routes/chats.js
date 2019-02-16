@@ -20,13 +20,11 @@ router.post("/new", (req, res) => {
   }
 
   // Get member ids for the given usernames
-  console.log(username1 + username2);
   db.many(`SELECT memberid FROM members WHERE username=$1 OR username=$2`, [username1, username2])
     .then((rows) => {
       // Insert chat into chats
       db.one(`INSERT INTO Chats(Name) VALUES ($1) RETURNING chatid`, [chatName])
         .then((row) => {
-          console.log(row);
           // Assign the two people to chatMembers of the chat
           db.none(`INSERT INTO ChatMembers(ChatID, MemberID) VALUES ($1, $2), ($1, $3)`, [row.chatid, rows[0].memberid, rows[1].memberid])
             .then(() => {
@@ -59,8 +57,9 @@ router.post("/new", (req, res) => {
   // add the chat to the chat server
 
 });
+
 // get all chat rooms
-router.get("/getChats", (req, res) => {
+router.post("/getChats", (req, res) => {
   let username = req.body['username'];
   if (!username) {
     res.send({
@@ -74,7 +73,6 @@ router.get("/getChats", (req, res) => {
   db.one('SELECT memberid FROM members WHERE username=$1', [username])
     .then((row) => {
       // Get all associated chat ids
-      console.log(row)
       db.manyOrNone(`SELECT chatmembers.chatId, chats.name FROM chatmembers INNER JOIN chats ON chatmembers.chatid=chats.chatid WHERE memberid=$1`, [row.memberid])
         .then((rows) => {
           res.send({
