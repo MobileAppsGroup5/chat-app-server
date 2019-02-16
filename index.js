@@ -21,6 +21,8 @@ app.use('/pushy', middleware.checkToken, require('./routes/pushy.js'));
 
 app.use('/messaging', middleware.checkToken, require('./routes/messaging.js'));
 
+app.use('/chats', middleware.checkToken, require('./routes/chats.js'));
+
 /*
  * Return HTML for the / end point.
  * This is a nice location to document your web service API
