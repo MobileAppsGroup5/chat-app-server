@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
 
   if (email && theirPw) {
     //Using the 'one' method means that only one row should be returned
-    db.one('SELECT Password, Salt, verification FROM Members WHERE Email=$1', [email])
+    db.one('SELECT Password, Salt, verification, username, firstname, lastname FROM Members WHERE Email=$1', [email])
       .then(row => { // If successful, run function passed into .then()
         let salt = row['salt'];
         //Retrieve our copy of the password
@@ -51,10 +51,15 @@ router.post('/', (req, res) => {
               }
             );
             // package and send the results
+            // Also send back user related information such as username, firstname,
+            // and last name
             res.json({
               success: true,
               message: 'Authentication successful!',
-              token: token
+              token: token,
+              username: row.username,
+              firstname: row.firstname,
+              lastname: row.lastname,
             });
           } else {
             // user has not verified
