@@ -78,7 +78,8 @@ router.get("/getChats", (req, res) => {
       db.manyOrNone(`SELECT chatmembers.chatId, chats.name FROM chatmembers INNER JOIN chats ON chatmembers.chatid=chats.chatid WHERE memberid=$1`, [row.memberid])
         .then((rows) => {
           res.send({
-            messages: rows
+            success: true,
+            chats: rows
           })
         }).catch((err) => {
           res.send({
