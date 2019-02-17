@@ -23,8 +23,8 @@ router.post("/send", (req, res) => {
   let insert = `INSERT INTO Messages(ChatId, Message, MemberId) SELECT $1, $2, MemberId FROM Members WHERE username=$3`
   db.none(insert, [chatId, message, username])
     .then(() => {
-      //send a notification of this message to ALL members with registered tokens
-      db.manyOrNone('SELECT * FROM Push_Token')
+      // send to members in the given chatid
+      db.manyOrNone('select * from push_token inner join chatmembers on push_token.memberid=chatmembers.memberid where chatid=$1', [chatId])
         .then(rows => {
           rows.forEach(element => {
             msg_functions.sendToIndividual(element['token'], message, username);
