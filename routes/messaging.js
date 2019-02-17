@@ -12,10 +12,11 @@ router.post("/send", (req, res) => {
   let username = req.body['username'];
   let message = req.body['message'];
   let chatId = req.body['chatId'];
+  console.log(chatId);
   if (!username || !message || !chatId) {
     res.send({
       success: false,
-      error: "email, message, or chatId not supplied"
+      error: "username, message, or chatId not supplied"
     });
     return;
   }
