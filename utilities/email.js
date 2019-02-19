@@ -18,7 +18,20 @@ function sendVerificationEmail(email) {
       // register for Chapp please disregard this email.</p>\
       // <a href=\'' + user_verify_url + '\'>' + user_verify_url + '</a>';
 
-      let email_body = '<!DOCTYPE html><html><title>Verify your account! </title><head><meta name="viewport" content="width=device-width, initial-scale=1"><style>p {text-align: center;}h1 {text-align: center;font-family: Verdana, Geneva, Tahoma, sans-serif;}body {background-image: url("logo_transparent.png");background-repeat: no-repeat;background-size: contain;background-position: center;background-color: lightblue;}img {width: auto;max-width: 100%;height: auto; }</style></head><body><h1 style="font-size:16px">Welcome Chappsters!</h1><br></div></div><p>Dear Fellow Chappster,</p><p>Thanks for registering with CHAPP "The Best Chat App". Attached with this email is a link that verifies your membership with CHAPP. <br><p>Please click this verification link which will automatically verify you have control over this email account.</p> <p><a href=\"' + user_verify_url + '\">Verification Link for CHAPP!</a></p><br><br><p>If you did not register this account, email us immediately at <a href="mailto:tcss450chapp@gmail.com">tcss450chapp@gmail.com</a>as your account might be compromised.</p><br><br><br><br> </p></body></html>';
+      let email_body = '<!DOCTYPE html><html><title>Verify your account! </title>\
+      <head><meta name="viewport" content="width=device-width, initial-scale=1">\
+      <style>p {text-align: center;}h1 {text-align: center;font-family: Verdana, Geneva, Tahoma, sans-serif;}\
+      body {background-image: url("logo_transparent.png");background-repeat: no-repeat;background-size: \
+      contain;background-position: center;background-color: lightblue;}\
+      img {width: auto;max-width: 100%;height: auto; }</style></head>\
+      <body><h1 style="font-size:16px">Welcome Chappsters!</h1><br></div></div><p>Dear Fellow Chappster,</p>\
+      <p>Thanks for registering with CHAPP "The Best Chat App". \
+      Attached with this email is a link that verifies your membership with CHAPP. <br>\
+      <p>Please click this verification link which will automatically verify you have control over this email account.</p> \
+      <p><a href=\"' + user_verify_url + '\">Verification Link for CHAPP!</a></p>\
+      <br><br><p>If you did not register this account, email us immediately at\
+      <a href="mailto:tcss450chapp@gmail.com">tcss450chapp@gmail.com</a>as your account might be compromised.</p><br><br>\
+      </p></body></html>';
 
       let transporter = nodemailer.createTransport({
         service: 'gmail',
