@@ -24,14 +24,14 @@ function sendVerificationEmail(email) {
       body {background-image: url("logo_transparent.png");background-repeat: no-repeat;background-size: \
       contain;background-position: center;background-color: lightblue;}\
       img {width: auto;max-width: 100%;height: auto; }</style></head>\
-      <body><h1 style="font-size:16px">Welcome Chappsters!</h1><br></div></div><p>Dear Fellow Chappster,</p>\
-      <p>Thanks for registering with CHAPP "The Best Chat App". \
+      <body><h1 style="font-size: 16px;text-align: center;font-family: Verdana, Geneva, Tahoma, sans-serif;">Welcome Chappsters!</h1><br><p style="text-align: center;">Dear Fellow Chappster,</p>\
+      <p style="text-align: center;">Thanks for registering with CHAPP "The Best Chat App". \
       Attached with this email is a link that verifies your membership with CHAPP. <br>\
-      <p>Please click this verification link which will automatically verify you have control over this email account.</p> \
-      <p><a href=\"' + user_verify_url + '\">Verification Link for CHAPP!</a></p>\
-      <br><br><p>If you did not register this account, email us immediately at\
-      <a href="mailto:tcss450chapp@gmail.com">tcss450chapp@gmail.com</a>as your account might be compromised.</p><br><br>\
-      </p></body></html>';
+      </p><p style="text-align: center;">Please click this verification link which will automatically \
+      verify you have control over this email account.\
+      </p> <p style="text-align: center;"><a href=\'' + user_verify_url + '\'>' + user_verify_url + '</a></p><br><br>\
+      <p style="text-align: center;">If you did not register this account,\
+     contact us at <a href = "mailto:tcsschapp450@gmail.com">tcsschapp450@gmail.com</ahref></a> </body></html>'
 
       let transporter = nodemailer.createTransport({
         service: 'gmail',
