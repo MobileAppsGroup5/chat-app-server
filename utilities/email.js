@@ -21,7 +21,7 @@ function sendVerificationEmail(email) {
       let email_body = '<!DOCTYPE html><html><title>Verify your account! </title>\
       <head><meta name="viewport" content="width=device-width, initial-scale=1">\
       <style>p {text-align: center;}h1 {text-align: center;font-family: Verdana, Geneva, Tahoma, sans-serif;}\
-      body {background-image: url(https://drive.google.com/file/d/1VW6gNSzPTJunMeRhHD2nneHSJvHZhNvq/view?usp=sharing);background-repeat: no-repeat;background-size: \
+      body {background-image: url(https://drive.google.com/file/d/1VW6gNSzPTJunMeRhHD2nneHSJvHZhNvq/view);background-repeat: no-repeat;background-size: \
       contain;background-position: center; background-color:powderblue;}\
       img {width: auto;max-width: 100%;height: auto; }</style></head>\
       <body><h1 style="font-size: 16px;text-align: center;font-family: Verdana, Geneva, Tahoma, sans-serif;">Welcome Chappsters!</h1><br><p style="text-align: center;">Dear Fellow Chappster,</p>\
@@ -29,7 +29,7 @@ function sendVerificationEmail(email) {
       Attached with this email is a link that verifies your membership with CHAPP. <br>\
       </p><p style="text-align: center;">Please click this verification link which will automatically \
       verify you have control over this email account.\
-      </p> <p style="text-align: center;"><a href=\'' + user_verify_url + '\'>' + user_verify_url + '</a></p><br><br>\
+      </p> <p style="text-align: center;"><a href=\'' + user_verify_url + '\'></a></p><br><br>\
       <p style="text-align: center;">If you did not register this account,\
      contact us at <a href = "mailto:tcsschapp450@gmail.com">tcsschapp450@gmail.com</ahref></a> </body></html>'
 
