@@ -29,7 +29,7 @@ function sendVerificationEmail(email) {
       Attached with this email is a link that verifies your membership with CHAPP. <br>\
       </p><p style="text-align: center;">Please click this verification link which will automatically \
       verify you have control over this email account.\
-      </p> <p style="text-align: center;"><a href=\'' + user_verify_url + '\'></a></p><br><br>\
+      </p> <p style="text-align: center;"><a href=\'' + user_verify_url + '\'>Verify Email</a></p><br><br>\
       <p style="text-align: center;">If you did not register this account,\
      contact us at <a href = "mailto:tcsschapp450@gmail.com">tcsschapp450@gmail.com</ahref></a> </body></html>'
 
