@@ -21,7 +21,7 @@ function sendVerificationEmail(email) {
       let email_body = '<!DOCTYPE html><html><title>Verify your account! </title>\
       <head><meta name="viewport" content="width=device-width, initial-scale=1">\
       <style>p {text-align: center;}h1 {text-align: center;font-family: Verdana, Geneva, Tahoma, sans-serif;}\
-      body {background-image: url(https://drive.google.com/file/d/1VW6gNSzPTJunMeRhHD2nneHSJvHZhNvq/view);background-repeat: no-repeat;background-size: \
+      body {background-image: url(https://i.imgur.com/KfRqtQp.png);background-repeat: no-repeat;background-size: \
       contain;background-position: center; background-color:powderblue;}\
       img {width: auto;max-width: 100%;height: auto; }</style></head>\
       <body><h1 style="font-size: 16px;text-align: center;font-family: Verdana, Geneva, Tahoma, sans-serif;">Welcome Chappsters!</h1><br><p style="text-align: center;">Dear Fellow Chappster,</p>\
@@ -42,7 +42,7 @@ function sendVerificationEmail(email) {
       });
 
       let mailOptions = {
-        from: 'tcsschapp450@gmail.com',
+        from: 'Chapp(noreply)',
         to: email,
         subject: 'Verify your account with Chapp',
         html: email_body,
