@@ -35,8 +35,9 @@ function sendVerificationEmail(email) {
      contact us at <a href = "mailto:tcsschapp450@gmail.com">tcsschapp450@gmail.com</ahref></a> </body></html>'
 
       let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
+        {
+          service: 'gmail',
+          auth: {
           user: 'tcsschapp450@gmail.com',
           pass: process.env.EMAIL_PASSWORD,
         },
