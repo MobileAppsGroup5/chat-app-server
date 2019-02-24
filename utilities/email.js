@@ -39,7 +39,7 @@ function sendVerificationEmail(email) {
         auth: {
           user: 'tcsschapp450@gmail.com',
           pass: process.env.EMAIL_PASSWORD,
-        }
+        },
         {
           from: 'Chapp(noreply)'
         }
