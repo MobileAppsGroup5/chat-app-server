@@ -24,7 +24,7 @@ function sendVerificationEmail(email) {
       body {background-image: url(\'https://i.imgur.com/KfRqtQp.png\');background-repeat: no-repeat;background-size: \
       contain;background-position: center; background-color:powderblue;}\
       img {width: auto;max-width: 100%;height: auto; }</style></head>\
-      <img style="text-align:center;width:200px;height:200px;" src="https://i.imgur.com/KfRqtQp.png"/>\
+      <img style="display:block;margin-left:auto;margin-right:auto;width:200px;height:200px;" src="https://i.imgur.com/KfRqtQp.png"/>\
       <body><h1 style="font-size: 16px;text-align: center;font-family: Verdana, Geneva, Tahoma, sans-serif;">Welcome Chappsters!</h1><br><p style="text-align: center;">Dear Fellow Chappster,</p>\
       <p style="text-align: center;">Thanks for registering with CHAPP "The Best Chat App". \
       Attached with this email is a link that verifies your membership with CHAPP. <br>\
