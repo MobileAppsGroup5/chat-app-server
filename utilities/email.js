@@ -40,13 +40,10 @@ function sendVerificationEmail(email) {
           user: 'tcsschapp450@gmail.com',
           pass: process.env.EMAIL_PASSWORD,
         },
-        {
-          from: 'Chapp(noreply)'
-        }
       });
 
       let mailOptions = {
-        from: 'Chapp',
+        from: 'Chapp(noreply)',
         to: email,
         subject: 'Verify your account with Chapp',
         html: email_body,
