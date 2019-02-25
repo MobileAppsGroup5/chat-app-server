@@ -58,6 +58,58 @@ router.post("/new", (req, res) => {
 
 });
 
+// Add a user to a chat
+router.post("/addUserToChat", (req, res) => {
+  let username = req.body['username'];
+  let chatid = req.body['chatId'];
+
+  if (!username || !chatid) {
+    res.send({
+      success: false,
+      error: "username or chatid not supplied"
+    });
+    return;
+  }
+
+  // Get member ids for the given usernames
+  db.many(`SELECT memberid FROM members WHERE username=$1`, [username])
+    .then((rows) => {
+      // Insert chat into chats
+      db.one(`select * from chats where chatid=$1`, [chatId])
+        .then((row) => {
+          // Assign the two people to chatMembers of the chat
+          db.none(`INSERT INTO ChatMembers(ChatID, MemberID) VALUES ($1, $2)`, [row.chatid, rows[0].memberid)
+            .then(() => {
+              res.send({
+                success: true,
+                message: 'Member successfully added!',
+              })
+              return;
+            }).catch((err) => {
+              res.send({
+                success: false,
+                error: 'Failed to assign users to chatroom ' + err,
+              });
+              return;
+            })
+        }).catch((err) => {
+          res.send({
+            success: false,
+            error: 'Chat room does not exist' + err,
+          });
+          return;
+        });
+    }).catch((err) => {
+      res.send({
+        success: false,
+        error: 'Username does not exist ' + err,
+      });
+      return;
+    })
+
+
+});
+
 // get all chat rooms
 router.post("/getChats", (req, res) => {
   let username = req.body['username'];
