@@ -78,7 +78,7 @@ router.post("/addUserToChat", (req, res) => {
       db.one(`select * from chats where chatid=$1`, [chatId])
         .then((row) => {
           // Assign the two people to chatMembers of the chat
-          db.none(`INSERT INTO ChatMembers(ChatID, MemberID) VALUES ($1, $2)`, [row.chatid, rows[0].memberid)
+          db.none(`INSERT INTO ChatMembers(ChatID, MemberID) VALUES ($1, $2)`, [row.chatid, rows[0].memberid])
             .then(() => {
               res.send({
                 success: true,
