@@ -37,7 +37,7 @@ CREATE TABLE Messages (PrimaryKey SERIAL PRIMARY KEY,
                        MemberID INT,
                        FOREIGN KEY(MemberID) REFERENCES Members(MemberID),
                        FOREIGN KEY(ChatID) REFERENCES Chats(ChatID),
-                       TimeStamp TIMESTAMP WITH TIME ZONE DEFAULT current_date
+                       TimeStamp TIMESTAMP WITH TIME ZONE DEFAULT current_timezone(0)
 );
 
 DROP TABLE IF EXISTS Locations;
