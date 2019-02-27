@@ -50,7 +50,7 @@ router.post("/send", (req, res) => {
 router.post("/getAll", (req, res) => {
   let chatId = req.body['chatId'];
 
-  let query = `SELECT Members.username, Messages.Message, to_char(Messages.Timestamp AT TIME ZONE 'PST', 'HH12:MI:SS' ) AS Timestamp FROM Messages INNER JOIN Members ON Messages.MemberId=Members.MemberId WHERE ChatId=$1 ORDER BY Timestamp DESC`;
+  let query = `SELECT Members.username, Messages.Message, to_char(Messages.Timestamp AT TIME ZONE 'PST', 'MM-DD-YY HH12:MI:SS AM' ) AS Timestamp FROM Messages INNER JOIN Members ON Messages.MemberId=Members.MemberId WHERE ChatId=$1 ORDER BY Timestamp DESC`;
   db.manyOrNone(query, [chatId])
     .then((rows) => {
       res.send({
