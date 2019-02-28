@@ -102,6 +102,54 @@ router.post("/acceptRequest", (req, res) => {
     })
 });
 
+router.post("/declineRequest", (req, res) => {
+  let decliningUsername = req.body['decliningUsername'];
+  let requestUsername = req.body['requestUsername'];
+  if (!decliningUsername || !requestUsername) {
+    res.send({
+      success: false,
+      error: "declining or requesting usernames were not supplied"
+    });
+    return;
+  }
+
+  // Get memberid
+  db.one(`SELECT memberid FROM members WHERE username=$1`, [decliningUsername])
+    .then((decliningRow) => {
+      db.one(`SELECT memberid FROM members WHERE username=$1`, [requestUsername])
+        .then((requestRow) => {
+          console.log(requestRow.memberid + ' ' + decliningRow.memberid)
+          // Insert the req into the table
+          db.none(`delete from contacts where (memberid_a=$1 AND memberid_b=$2) OR (memberid_a=$2 AND memberid_b=$1)`, [requestRow.memberid, decliningRow.memberid])
+            .then(() => {
+              res.send({
+                success: true,
+                message: 'successfully connected'
+              })
+              return;
+            }).catch((err) => {
+              res.send({
+                success: false,
+                error: 'request does not exist!',
+              });
+              return;
+            })
+        }).catch((err) => {
+          res.send({
+            success: false,
+            error: 'request username does not exist',
+          })
+          return;
+        })
+    }).catch((err) => {
+      res.send({
+        success: false,
+        error: 'declining username username does not exist',
+      })
+      return;
+    })
+});
+
 // get all contacts and requests
 router.post("/getAllContactsAndRequests", (req, res) => {
   let username = req.body['username'];
