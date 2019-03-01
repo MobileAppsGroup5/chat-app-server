@@ -76,7 +76,9 @@ router.post("/acceptRequest", (req, res) => {
             .then(() => {
               res.send({
                 success: true,
-                message: 'successfully connected'
+                message: 'successfully connected',
+                acceptingUsername: acceptingUsername,
+                requestUsername: requestUsername,
               })
               return;
             }).catch((err) => {
@@ -124,7 +126,9 @@ router.post("/declineRequest", (req, res) => {
             .then(() => {
               res.send({
                 success: true,
-                message: 'successfully connected'
+                message: 'successfully destroyed connection',
+                decliningUsername: decliningUsername,
+                requestUsername: requestUsername,
               })
               return;
             }).catch((err) => {
