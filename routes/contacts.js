@@ -104,7 +104,7 @@ router.post("/acceptRequest", (req, res) => {
     })
 });
 
-router.post("/declineRequest", (req, res) => {
+router.post("/declineCancelOrDeleteRequest", (req, res) => {
   let decliningUsername = req.body['decliningUsername'];
   let requestUsername = req.body['requestUsername'];
   if (!decliningUsername || !requestUsername) {
