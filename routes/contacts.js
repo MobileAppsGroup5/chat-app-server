@@ -2,10 +2,12 @@
 const express = require('express');
 //Create connection to Heroku Database
 let db = require('../utilities/utils').db;
+let msg_functions = require('../utilities/utils').messaging;
 var router = express.Router();
 const bodyParser = require("body-parser");
 //This allows parsing of the body of POST requests, that are encoded in JSON
 router.use(bodyParser.json());
+
 // Create a new chat
 router.post("/submitRequest", (req, res) => {
   let usernameFrom = req.body['from'];
@@ -26,10 +28,24 @@ router.post("/submitRequest", (req, res) => {
           // Insert the req into the table
           db.none(`insert into contacts(memberid_a, memberid_b) values ($1, $2)`, [fromRow.memberid, toRow.memberid])
             .then(() => {
-              res.send({
-                success: true,
-                message: 'Request successfully sent!'
-              })
+
+              // send notification to push_tokens with the given memberid
+              db.manyOrNone('select * from push_token inner join contacts on push_token.memberid=contacts.memberid_b where memberid=$1', [toRow.memberid])
+                .then(rows => {
+                  rows.forEach(element => {
+                    msg_functions.sendContactReqToIndividual(element['token'], usernameFrom, usernameTo,
+                          'New connection request from ' + usernameFrom);
+                  });
+                  res.send({
+                    success: true,
+                    message: 'Request successfully sent!'
+                  });
+                }).catch(err => {
+                  res.send({
+                    success: false,
+                    error: "Failed to send notification" + err,
+                  });
+                })
               return;
             }).catch((err) => {
               res.send({

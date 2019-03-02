@@ -22,8 +22,9 @@ function sendToTopic(topic, msg, from) {
     console.log('Push sent successfully! (ID: ' + id + ')');
   });
 }
+
 //use to send message to a specific client by the token
-function sendToIndividual(token, msg, from, chatId) {
+function sendMessageToIndividual(token, msg, from, chatId) {
   //build the message for FCM to send
   var data = {
     "type": "msg",
@@ -43,7 +44,31 @@ function sendToIndividual(token, msg, from, chatId) {
     console.log('Push sent successfully! (ID: ' + id + ')');
   });
 }
+
+//use to send contact request to a specific client by the token
+function sendContactReqToIndividual(token, from, to, msg) {
+  //build the message for FCM to send
+  var data = {
+    "type": "conn req",
+    "sender": from,
+    "to": to,
+    "message": msg,
+  };
+  console.log(data);
+  // Send push notification via the Send Notifications API
+  // https://pushy.me/docs/api/send-notifications
+  pushyAPI.sendPushNotification(data, token, {}, function(err, id) {
+    // Log errors to console
+    if (err) {
+      return console.log('Fatal Error', err);
+    }
+    // Log success
+    console.log('Push sent successfully! (ID: ' + id + ')');
+  });
+}
+
 module.exports = {
   sendToTopic,
-  sendToIndividual
+  sendMessageToIndividual,
+  sendContactReqToIndividual
 };
