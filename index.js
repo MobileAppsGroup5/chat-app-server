@@ -25,7 +25,7 @@ app.use('/chats', middleware.checkToken, require('./routes/chats.js'));
 
 app.use('/connections', middleware.checkToken, require('./routes/connections.js'));
 
-app.use('/connections', require('./routes/forgot.js'));
+app.use('/forgot', require('./routes/forgot.js'));
 
 
 /*
