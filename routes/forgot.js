@@ -49,9 +49,9 @@ router.post('/email', (req, res) => {
 
         let mailOptions = {
             from: 'tcsschapp450@gmail.com',
-            to: user,
+            to: email,
             subject: 'Forgot your password?',
-            text: 'That was easy!'
+            html: '<h1>Below is the link to have your password reset.</h1><br><p>Click Here</p>'
         }
 
         transporter.sendMail(mailOptions, function(error, info) {
@@ -81,7 +81,7 @@ router.post('/forgot-password', function(req, res) {
             from: 'tcsschapp450@gmail.com',
             to: user,
             subject: 'Forgot your password?',
-            text: 'That was easy!'
+            html: '<h1>Below is the link to have your password reset.</h1><br><p>Click Here</p>'
         }
 
         transporter.sendMail(mailOptions, function(error, info) {
