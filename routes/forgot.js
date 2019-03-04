@@ -6,12 +6,12 @@ const crypto = require("crypto");
 
 // nodemailer to send forgot passwork link to reset to user
 var nodemailer =require('nodemailer');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var bcrypt = require('bcrypt-nodejs');
-var async = require('async');
+//var passport = require('passport');
+//var LocalStrategy = require('passport-local').Strategy;
+//var bcrypt = require('bcrypt-nodejs');
+//var async = require('async');
 
-let path = require('path');
+//let path = require('path');
 
 // Create connection to Heroku database
 let db = require('../utilities/utils').db;
