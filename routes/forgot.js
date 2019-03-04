@@ -90,8 +90,7 @@ router.post('/email', (req, res) => {
             from: 'tcsschapp450@gmail.com',
             to: email,
             subject: 'Forgot your password?',
-            text: 'Click here!' + user_pw_reset_url,
-            html: '<h1>Forgot your password?</h1><p>Click on this link to reset it!' + user_pw_reset_url + 'There you go!</p>'
+            html: email_body
         }
 
         transporter.sendMail(mailOptions, function(error, info) {
