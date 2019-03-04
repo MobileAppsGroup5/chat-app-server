@@ -23,7 +23,7 @@ app.use('/messaging', middleware.checkToken, require('./routes/messaging.js'));
 
 app.use('/chats', middleware.checkToken, require('./routes/chats.js'));
 
-app.use('/contacts', middleware.checkToken, require('./routes/contacts.js'))
+app.use('/connections', middleware.checkToken, require('./routes/connections.js'))
 
 /*
  * Return HTML for the / end point.

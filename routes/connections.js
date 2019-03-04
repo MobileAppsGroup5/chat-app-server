@@ -170,8 +170,26 @@ router.post("/declineCancelOrDeleteRequest", (req, res) => {
     })
 });
 
-// get all contacts and requests
-router.post("/getAllContactsAndRequests", (req, res) => {
+// returns firstname, lastname, username, and email from table. Useful for searching
+// through contacts on the frontend
+router.post("/getAllMemberData", (req, res) => {
+  // find the memberid for the given username
+  db.many('select firstname, lastname, username, email from members')
+    .then((rows) => {
+      res.send({
+        success: true,
+        users: rows
+      })
+    }).catch((err) => {
+      res.send({
+        success: false,
+        error: 'Error fetching member data: ' + err
+      })
+    })
+});
+
+// get all connections and requests
+router.post("/getAllConnectionsAndRequests", (req, res) => {
   let username = req.body['username'];
   if (!username) {
     res.send({
@@ -192,7 +210,7 @@ router.post("/getAllContactsAndRequests", (req, res) => {
         .then((rows) => {
           res.send({
             success: true,
-            contacts: rows
+            connections: rows
           })
         }).catch((err) => {
           res.send({
