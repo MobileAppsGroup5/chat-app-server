@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 //This allows parsing of the body of POST requests, that are encoded in JSON
 router.use(bodyParser.json());
 // Create a new chat
-router.post("/new", (req, res) => {
+router.post("/submitRequest", (req, res) => {
   let username1 = req.body['username1'];
   let username2 = req.body['username2'];
   let chatName = req.body['chatName'];
