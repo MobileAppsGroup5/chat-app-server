@@ -25,6 +25,8 @@ app.use('/chats', middleware.checkToken, require('./routes/chats.js'));
 
 app.use('/contacts', middleware.checkToken, require('./routes/contacts.js'))
 
+app.use('/forgot', require('./routes/forgot.js'));
+
 /*
  * Return HTML for the / end point.
  * This is a nice location to document your web service API
