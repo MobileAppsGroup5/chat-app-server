@@ -54,6 +54,8 @@ router.post('/email', (req, res) => {
             expiresIn: '1hr' // expires in 1 hour
         });
         let user_pw_reset_url = process.env.PASSWORD_RESET_URL + '?email=' + email + '&token' + token;
+        console.log(user_pw_reset_url);
+        console.log(token);
 
         let email_body = '<!DOCTYPE html><html><title>Let us get you back to CHAPPing it up </title>\
       <head><meta name="viewport" content="width=device-width, initial-scale=1"></head>\
@@ -88,7 +90,8 @@ router.post('/email', (req, res) => {
             from: 'tcsschapp450@gmail.com',
             to: email,
             subject: 'Forgot your password?',
-            html: email_body,
+            text: 'Click here!' + user_pw_reset_url,
+            html: '<h1>Forgot your password?</h1><p>Click on this link to reset it!' + user_pw_reset_url + 'There you go!</p>'
         }
 
         transporter.sendMail(mailOptions, function(error, info) {
