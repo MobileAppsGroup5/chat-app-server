@@ -35,8 +35,47 @@ router.use(bodyParser.json());
 
 router.post('/email', (req, res) => {
     let email = req.body['email'];
+
+
         // attach the plugin to the nodemailer transport
-    if(email) {
+    if(email) 
+    
+    {
+        res.send({
+            success:true,
+            message: email
+        });
+        // Let's get a new token and have it expire in 1 hour
+        let token = jwt.sign({
+            username:email
+            
+        },
+        config.secret,{
+            expiresIn: '1hr' // expires in 1 hour
+        });
+        let user_pw_reset_url = process.env.PASSWORD_RESET_URL + '?email=' + email + '&token' + token;
+
+        let email_body = '<!DOCTYPE html><html><title>Let us get you back to CHAPPing it up </title>\
+      <head><meta name="viewport" content="width=device-width, initial-scale=1"></head>\
+      <img style="display:block;margin-left:auto;margin-right:auto;width:200px;height:200px;" src="https://i.imgur.com/KfRqtQp.png"/>\
+      <body bgcolor="#212121" text="black"><h1 style="font-size: 16px;text-align: center;font-family: Verdana, Geneva, Tahoma, sans-serif;">Let us get you logged back in!</h1><br><p style="text-align: center;">Dear Fellow Chappster,</p>\
+      <p style="text-align: center;">So you forgot your password, huh? \
+      No worries, we you got covered! Just click on the verification link below to reset your password. <br>\
+      </p><p style="text-align: center;">This will take you to another screen in which you can input a new password. \
+      But do it fast because you have t-minus 1 hour before the link expires (security reasons) :).\
+      </p> <p style="text-align: center;"><a href="' + user_pw_reset_url + '">Verification Link</a></p><br><br>\
+      <p style="text-align: center;">If you did not request for a new password, please \
+     contact us immediately at <a href = "mailto:tcsschapp450@gmail.com">tcsschapp450@gmail.com</ahref></a> </body></html>'
+
+        // package and send the results. Also send back user related info
+        // such as email passed.
+        res.json({
+            success: true,
+            message: 'Authentication successful!',
+            token: token,
+        });
+
+
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -49,7 +88,7 @@ router.post('/email', (req, res) => {
             from: 'tcsschapp450@gmail.com',
             to: email,
             subject: 'Forgot your password?',
-            html: '<h1>Below is the link to have your password reset.</h1><br><p>Click Here</p>'
+            html: email_body,
         }
 
         transporter.sendMail(mailOptions, function(error, info) {
