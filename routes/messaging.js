@@ -21,7 +21,7 @@ router.post("/send", (req, res) => {
     return;
   }
   //add the message to the database
-  let insert = `INSERT INTO Messages(ChatId, Message, MemberId) SELECT $1, $2, MemberId FROM Members WHERE username=$3`
+  let insert = `INSERT INTO Messages(ChatId, Message, MemberId, HasBeenRead) VALUES ($1, $2, (SELECT MemberId FROM Members WHERE username=$3), 0)`
   db.none(insert, [chatId, message, username])
     .then(() => {
       // send to members in the given chatid
