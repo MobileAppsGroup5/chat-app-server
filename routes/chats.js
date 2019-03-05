@@ -121,27 +121,73 @@ router.post("/getChats", (req, res) => {
     return;
   }
 
-  // find the memberid for the given username
-  db.one('SELECT memberid FROM members WHERE username=$1', [username])
-    .then((row) => {
-      // Get all associated chat ids
-      db.manyOrNone(`SELECT chatmembers.chatId, chats.name FROM chatmembers INNER JOIN chats ON chatmembers.chatid=chats.chatid WHERE memberid=$1`, [row.memberid])
-        .then((rows) => {
+  let response = [];
+  // find the memberid for the given username\
+  // new Promise(function(resolve, reject) {
+    db.many('SELECT chatmembers.chatid\
+    FROM chatmembers\
+    INNER JOIN members\
+    ON members.memberid=chatmembers.memberid\
+    WHERE members.username=$1', [username])
+      .then((rows) => {
+        let room = {
+          usernames: [],
+        };
+        // new Promise((resolve, reject) => {
+        rows.forEach(element => {
+          // Get all associated chat ids
+          db.manyOrNone(`SELECT\
+          chatmembers.chatid\
+          , chats.name\
+          , members.username\
+          FROM chatmembers\
+          INNER JOIN chats\
+          ON chatmembers.chatid=chats.chatid\
+          INNER JOIN members\
+          ON chatmembers.memberid=members.memberid\
+          WHERE chatmembers.chatid=$1`, [element.chatid])
+          .then((rows) => {
+              // new Promise((resolve, reject) => {
+                rows.forEach(element => {
+                  Object.assign(room, element);
+                  room.usernames.push(element.username);
+                });
+                delete room.username;
+              //   if (room.length ==) {
+              //     resolve();
+              //   }
+              // }).then(() => {
+              //   resolve();
+              // })
+            }).catch((err) => {
+              res.send({
+                success: false,
+                error: 'Failed to fetch chat rooms for user ' + err
+              })
+            });
+          // }).then(() => {
+          response.push(room);
+          
           res.send({
             success: true,
-            chats: rows
+            chats: response,
           })
-        }).catch((err) => {
-          res.send({
-            success: false,
-            error: 'Failed to fetch chat rooms for user ' + err
-          })
+          // if (response.length === rows.length) {
+          //   resolve();
+          // }
+          // })
         });
-    }).catch((err) => {
-      res.send({
-        success: false,
-        error: 'User does not exist ' + err
+      }).catch((err) => {
+        res.send({
+          success: false,
+          error: 'User does not exist ' + err
+        })
       })
-    })
+  // }).then(() => {
+  //   res.send({
+  //     success: true,
+  //     chats: response,
+  //   })
+  // })
 });
 module.exports = router;
