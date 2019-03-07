@@ -124,59 +124,65 @@ router.post("/getChats", (req, res) => {
   let response = [];
   // find the memberid for the given username\
   // new Promise(function(resolve, reject) {
-    db.many('SELECT chatmembers.chatid\
-    FROM chatmembers\
-    INNER JOIN members\
-    ON members.memberid=chatmembers.memberid\
-    WHERE members.username=$1', [username])
+    db.many('with cte as (\
+      select chatmembers.chatid from chatmembers\
+      inner join members\
+        on members.memberid=chatmembers.memberid\
+      where members.username=$1)\
+      select chats.name, members.username, chats.chatid from chats\
+      inner join chatmembers\
+      on chatmembers.chatid=chats.chatid\
+      INNER JOIN members\
+      ON members.memberid=chatmembers.memberid\
+      where exists (select 1 from cte where chatid=chats.chatid)\
+      ', [username])
       .then((rows) => {
-        let room = {
-          usernames: [],
-        };
-        // new Promise((resolve, reject) => {
-        rows.forEach(element => {
-          // Get all associated chat ids
-          db.manyOrNone(`SELECT\
-          chatmembers.chatid\
-          , chats.name\
-          , members.username\
-          FROM chatmembers\
-          INNER JOIN chats\
-          ON chatmembers.chatid=chats.chatid\
-          INNER JOIN members\
-          ON chatmembers.memberid=members.memberid\
-          WHERE chatmembers.chatid=$1`, [element.chatid])
-          .then((rows) => {
-              // new Promise((resolve, reject) => {
-                rows.forEach(element => {
-                  Object.assign(room, element);
-                  room.usernames.push(element.username);
-                });
-                delete room.username;
-              //   if (room.length ==) {
-              //     resolve();
-              //   }
-              // }).then(() => {
-              //   resolve();
-              // })
-            }).catch((err) => {
-              res.send({
-                success: false,
-                error: 'Failed to fetch chat rooms for user ' + err
-              })
-            });
-          // }).then(() => {
-          response.push(room);
-          
-          res.send({
-            success: true,
-            chats: response,
-          })
-          // if (response.length === rows.length) {
-          //   resolve();
-          // }
-          // })
-        });
+            res.send({
+              success: true,
+              chats: rows,
+            })
+
+        // // new Promise((resolve, reject) => {
+        //   // Get all associated chat ids
+        //   db.manyOrNone(`SELECT\
+        //   chatmembers.chatid\
+        //   , chats.name\
+        //   , members.username\
+        //   FROM chatmembers\
+        //   INNER JOIN chats\
+        //   ON chatmembers.chatid=chats.chatid\
+        //   INNER JOIN members\
+        //   ON chatmembers.memberid=members.memberid\
+        //   WHERE chatmembers.chatid=$1`, [chatidrows[0].chatid])
+        //   .then((rows) => {
+        //     res.send({
+        //       success: true,
+        //       chats: rows,
+        //     })
+        //       // new Promise((resolve, reject) => {
+        //         // rows.forEach(element => {
+        //         //   Object.assign(room, element);
+        //         //   room.usernames.push(element.username);
+        //         // });
+        //         // delete room.username;
+        //       //   if (room.length ==) {
+        //       //     resolve();
+        //       //   }
+        //       // }).then(() => {
+        //       //   resolve();
+        //       // })
+        //     }).catch((err) => {
+        //       res.send({
+        //         success: false,
+        //         error: 'Failed to fetch chat rooms for user ' + err
+        //       })
+        //     });
+        //   // }).then(() => {
+        //   response.push(room);
+        //   // if (response.length === rows.length) {
+        //   //   resolve();
+        //   // }
+        //   // })
       }).catch((err) => {
         res.send({
           success: false,
