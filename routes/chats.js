@@ -124,17 +124,15 @@ router.post("/getChats", (req, res) => {
   let response = [];
   // find the memberid for the given username\
   // new Promise(function(resolve, reject) {
-    db.many('with cte as (\
-      select chatmembers.chatid from chatmembers\
-      inner join members\
-        on members.memberid=chatmembers.memberid\
-      where members.username=$1)\
-      select chats.name, members.username, chats.chatid from chats\
-      inner join chatmembers\
-      on chatmembers.chatid=chats.chatid\
-      INNER JOIN members\
-      ON members.memberid=chatmembers.memberid\
-      where exists (select 1 from cte where chatid=chats.chatid)\
+    db.many('WITH cte AS (SELECT ChatMembers.ChatID\
+      FROM ChatMembers INNER JOIN Members ON\
+      Members.MemberID=ChatMembers.MemberID\
+      WHERE Members.Username=$1)\
+      SELECT Chats.name, json_agg(Members.Username) AS usernames, Chats.ChatID\
+      FROM Chats INNER JOIN ChatMembers ON ChatMembers.ChatID=Chats.ChatID INNER JOIN Members ON Members.MemberID=ChatMembers.MemberID\
+      WHERE EXISTS (SELECT 1 FROM cte WHERE ChatID=Chats.ChatID)\
+      GROUP BY Chats.name, Chats.ChatID\
+      ORDER BY Chats.ChatID\
       ', [username])
       .then((rows) => {
             res.send({
