@@ -20,6 +20,8 @@ let getHash = require('../utilities/utils').getHash;
 
 let sendEmail = require('../utilities/utils').sendEmail;
 
+let path = require('path');
+
 var router = express.Router();
 
 const bodyParser = require("body-parser");
@@ -101,5 +103,11 @@ router.post('/email', (req, res) => {
     });
     }
 });
+
+router.get('/passwordreset/:token', function (req, res) {
+    
+    res.sendFile(path.join(__dirname+'/..pages/confirmpassword.html'));
+})
+
 
 module.exports = router;
