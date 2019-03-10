@@ -69,7 +69,7 @@ router.post("/submitRequest", (req, res) => {
 router.post("/acceptRequest", (req, res) => {
   let acceptingUsername = req.body['acceptingUsername'];
   let chatid = req.body['chatid'];
-  
+
   if (!acceptingUsername || !chatid) {
     res.send({
       success: false,
@@ -105,39 +105,31 @@ router.post("/acceptRequest", (req, res) => {
     })
 })
 
-router.post("/declineCancelOrDeleteRequest", (req, res) => {
+router.post("/leaveChat", (req, res) => {
+  let username = req.body['username'];
   let chatid = req.body['chatid'];
-  if (!chatid) {
+  if (!chatid || !username) {
     res.send({
       success: false,
-      error: "chatid not supplied"
+      error: "chatid or username not supplied"
     });
     return;
   }
 
   // Delete the chat members
-  db.none(`delete from chatmembers where chatid=$1`, [chatid])
+  db.none(`delete from chatmembers using members where members.memberid=chatmembers.memberid AND chatid=$1  AND members.username=$2`, [chatid, username])
     .then(() => {
-      // Delete the chat
-      db.none(`delete from chats where chatid=$1`, [chatid])
-        .then(() => {
-          res.send({
-            success: true,
-            message: 'successfully destroyed chat',
-            chatid: chatid,
-          })
-          return;
-        }).catch((err) => {
-          res.send({
-            success: false,
-            error: 'chat does not exist!',
-          });
-          return;
-        })
+      res.send({
+        success: true,
+        message: 'successfully left chat',
+        chatid: chatid,
+      })
+      return;
+
     }).catch((err) => {
       res.send({
         success: false,
-        error: 'chat does not exist!',
+        error: 'chat does not exist or not member!',
       });
       return;
     })
