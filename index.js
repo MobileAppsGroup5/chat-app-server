@@ -28,6 +28,8 @@ app.use('/connections', middleware.checkToken, require('./routes/connections.js'
 app.use('/forgot', require('./routes/forgot.js'));
 
 
+app.use('/forgot', require('./routes/forgot.js'));
+
 /*
  * Return HTML for the / end point.
  * This is a nice location to document your web service API

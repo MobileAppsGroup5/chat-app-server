@@ -14,15 +14,25 @@
   "author": "TCSS 450",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.6.2",
+    "bcrypt": "^3.0.4",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
     "firebase-admin": "^6.1.0",
     "form-data": "^2.3.2",
     "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.4.16",
     "mysql": "^2.15.0",
     "nodemailer": "^5.1.1",
+    "nodemailer-express-handlebars": "^3.0.0",
     "npm": "^5.7.1",
     "passport": "^0.4.0",
+<<<<<<< HEAD
+=======
+    "passport-local": "^1.0.0",
+>>>>>>> forgotpasssword/trungdev
     "pg": "^7.4.1",
     "pg-promise": "^8.1.1",
     "pushy": "^2.0.5",
