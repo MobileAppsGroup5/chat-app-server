@@ -176,25 +176,25 @@ router.post("/getChats", (req, res) => {
       FROM ChatMembers INNER JOIN Members ON\
       Members.MemberID=ChatMembers.MemberID\
       WHERE Members.Username=$1)\
-      SELECT Chats.name, Chats.ChatID, json_agg(DISTINCT Members.Username) AS usernames, min(messages.hasbeenread) as hasbeenread, json_agg(chatmembers.accepted) AS acceptedpairs\
+      SELECT Chats.name, Chats.ChatID, json_agg(DISTINCT Members.Username) AS usernames, min(messages.hasbeenread) as hasbeenread, json_agg(chatmembers.accepted) AS acceptedpairs, json_agg(messages.usernamefrom)\
       FROM Chats INNER JOIN ChatMembers ON ChatMembers.ChatID=Chats.ChatID INNER JOIN Members ON Members.MemberID=ChatMembers.MemberID LEFT JOIN Messages ON Messages.chatid=chats.chatid\
       WHERE EXISTS (SELECT 1 FROM cte WHERE ChatID=Chats.ChatID)\
       GROUP BY Chats.name, Chats.ChatID\
       ', [username])
         .then((rows) => {
-          db.many('select members.username, chatmembers.chatid from members inner join chatmembers on chatmembers.memberid=members.memberid inner join messages on messages.chatid=chatmembers.chatid where messages.memberid=$1  order by messages.primarykey', row.memberid)
-          .then((innerRows) => {
+          // db.manyOrNone('select chatmembers.chatid, usernameFrom from members inner join chatmembers on chatmembers.memberid=members.memberid inner join messages on messages.chatid=chatmembers.chatid where messages.memberid=$1  order by messages.primarykey', row.memberid)
+          // .then((innerRows) => {
             res.send({
               success: true,
               chats: rows,
               usermessaginghistory: innerRows
             })
-          }).catch((err) => {
-            res.send({
-              success: false,
-              error: 'Error in history query ' + err
-            })
-          })
+          // }).catch((err) => {
+          //   res.send({
+          //     success: false,
+          //     error: 'Error in history query ' + err
+          //   })
+          // })
 
           // // new Promise((resolve, reject) => {
           //   // Get all associated chat ids
