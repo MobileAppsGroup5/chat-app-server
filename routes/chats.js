@@ -176,7 +176,7 @@ router.post("/getChats", (req, res) => {
       FROM ChatMembers INNER JOIN Members ON\
       Members.MemberID=ChatMembers.MemberID\
       WHERE Members.Username=$1)\
-      SELECT Chats.name, Chats.ChatID, json_agg(DISTINCT Members.Username) AS usernames, min(messages.hasbeenread) as hasbeenread, json_agg(chatmembers.accepted) AS acceptedpairs, json_agg(messages.usernamefrom)\
+      SELECT Chats.name, Chats.ChatID, json_agg(DISTINCT Members.Username) AS usernames, min(messages.hasbeenread) as hasbeenread, json_agg(chatmembers.accepted) AS acceptedpairs, json_agg(messages.usernamefrom) AS lastSenders\
       FROM Chats INNER JOIN ChatMembers ON ChatMembers.ChatID=Chats.ChatID INNER JOIN Members ON Members.MemberID=ChatMembers.MemberID LEFT JOIN Messages ON Messages.chatid=chats.chatid\
       WHERE EXISTS (SELECT 1 FROM cte WHERE ChatID=Chats.ChatID)\
       GROUP BY Chats.name, Chats.ChatID\
@@ -187,7 +187,6 @@ router.post("/getChats", (req, res) => {
             res.send({
               success: true,
               chats: rows,
-              usermessaginghistory: innerRows
             })
           // }).catch((err) => {
           //   res.send({
