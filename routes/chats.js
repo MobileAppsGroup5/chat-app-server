@@ -67,7 +67,7 @@ router.post("/submitRequest", (req, res) => {
 });
 
 router.post("/acceptRequest", (req, res) => {
-  let acceptingUsername = req.body['acceptingUsername'];
+  let acceptingUsername = req.body['username'];
   let chatid = req.body['chatid'];
 
   if (!acceptingUsername || !chatid) {
