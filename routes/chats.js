@@ -99,7 +99,46 @@ router.post("/acceptRequest", (req, res) => {
     }).catch((err) => {
       res.send({
         success: false,
-        error: 'accepting username username does not exist',
+        error: 'accepting username does not exist',
+      })
+      return;
+    })
+})
+
+router.post("/addUser", (req, res) => {
+  let username = req.body['username'];
+  let chatid = req.body['chatid'];
+
+  if (!username || !chatid) {
+    res.send({
+      success: false,
+      error: "username or chatid was not supplied"
+    });
+    return;
+  }
+
+  // Get memberid
+  db.one(`SELECT memberid FROM members WHERE username=$1`, [username])
+    .then((addRow) => {
+      db.none(`insert into chatmembers(chatid, memberid, accepted) values($2, $1, 0)`, [addRow.memberid, chatid])
+        .then((requestRow) => {
+          res.send({
+            success: true,
+            message: 'successfully requested adding',
+            chatid: chatid,
+            username: username,
+          })
+        }).catch((err) => {
+          res.send({
+            success: false,
+            error: 'error while trying to update' + err,
+          })
+          return;
+        })
+    }).catch((err) => {
+      res.send({
+        success: false,
+        error: 'username does not exist',
       })
       return;
     })
