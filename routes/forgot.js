@@ -6,6 +6,13 @@ const crypto = require("crypto");
 
 // nodemailer to send forgot passwork link to reset to user
 var nodemailer =require('nodemailer');
+
+const bodyParser = require("body-parser");
+
+// allows us to parse the data sent in the webform.
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
+
+
 //var passport = require('passport');
 //var LocalStrategy = require('passport-local').Strategy;
 //var bcrypt = require('bcrypt-nodejs');
@@ -24,7 +31,6 @@ let path = require('path');
 
 var router = express.Router();
 
-const bodyParser = require("body-parser");
 
 // Pull in the JWT module along with our secret key
 let jwt = require('jsonwebtoken');
@@ -55,7 +61,8 @@ router.post('/email', (req, res) => {
         config.secret,{
             expiresIn: '1hr' // expires in 1 hour
         });
-        let user_pw_reset_url = process.env.PASSWORD_RESET_URL + '?email=' + email + '&token' + token;
+        let link = 'http://localhost:5000/forgot/passwordreset' + '?email=' + email + '&token=' + token;
+        let user_pw_reset_url = process.env.PASSWORD_RESET_URL;// + '?email=' + email + '&token' + token;
 
         let email_body = '<!DOCTYPE html><html><title>Let us get you back to CHAPPing it up </title>\
       <head><meta name="viewport" content="width=device-width, initial-scale=1"></head>\
@@ -65,17 +72,17 @@ router.post('/email', (req, res) => {
       No worries, we you got covered! Just click on the verification link below to reset your password. <br>\
       </p><p style="text-align: center;">This will take you to another screen in which you can input a new password. \
       But do it fast because you have t-minus 10 minutes before the link expires (security reasons) :).\
-      </p> <p style="text-align: center;"><a href="' + user_pw_reset_url + '">Verification Link</a></p><br><br>\
+      </p> <p style="text-align: center;"><a href="' + link + '">Verification Link</a></p><br><br>\
       <p style="text-align: center;">If you did not request for a new password, please \
      contact us immediately at <a href = "mailto:tcsschapp450@gmail.com">tcsschapp450@gmail.com</ahref></a> </body></html>'
 
         // package and send the results. Also send back user related info
         // such as email passed.
-        res.json({
+ /*       res.json({
             success: true,
             message: 'Authentication successful!',
             token: token,
-        });
+        });     */
 
 
         var transporter = nodemailer.createTransport({
@@ -104,10 +111,48 @@ router.post('/email', (req, res) => {
     }
 });
 
-router.get('/passwordreset/:token', function (req, res) {
+router.get('/passwordreset', function (req, res) {
+
+    let email = req.query['email'];
+    let token = req.query['token'];
     
-    res.sendFile(path.join(__dirname+'/..pages/confirmpassword.html'));
-})
+    if(email && token) {
+
+        db.none(`UPDATE members SET resetpasswordtoken = $1 WHERE email = $2`, [token, email])
+        .then(() => {
+            // renders the web form for user to input password with confirmation to reset
+            res.sendFile(path.join(__dirname+'/../pages/confirmpassword.html'));
+        }).catch((err) => {
+            res.send({
+                success:false,
+                message:err
+            });
+        });
+  } else {
+      res.send({
+          success:false,
+          message: 'The password reset token has expired or is invalid',
+      })
+  }
+});
+
+router.post('/resetpassword', urlencodedParser, function (req, res) {
+    let email = req.body['email'];
+    let newpassword = req.body['newpassword'];
+    let confirmpassword = req.body['confirmpassword'];
+
+    if (newpassword === confirmpassword) {
+        db.none(`UPDATE Members SET password = $1 WHERE email = $2`, [newpassword, email])
+        .then(() => {
+            res.send({
+                success:true,
+                message: "successfully changed your password"
+            })
+        })
+    }
+});
+
+
 
 
 module.exports = router;
