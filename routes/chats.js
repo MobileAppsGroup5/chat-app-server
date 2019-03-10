@@ -192,7 +192,7 @@ router.post("/getChats", (req, res) => {
     .then((row) => {
 
       // find the memberid for the given username\
-      db.many('WITH cte AS (SELECT ChatMembers.chatid\
+      db.manyOrNone('WITH cte AS (SELECT ChatMembers.chatid\
       FROM ChatMembers INNER JOIN Members ON\
       Members.MemberID=ChatMembers.MemberID\
       WHERE Members.Username=$1)\
