@@ -52,6 +52,13 @@ router.post("/send", (req, res) => {
 router.post("/getAll", (req, res) => {
   let chatId = req.body['chatId'];
   let username = req.body['username'];
+  if (!chatId || !username) {
+    res.send({
+      success: false,
+      error: "username or chatId not supplied"
+    });
+    return;
+  }
 
   let queryUpdate = 'UPDATE Messages SET HasBeenRead=1 WHERE chatId=$1 AND NOT (memberId=(SELECT memberId FROM Members WHERE username=$2))';
   let query = `SELECT Members.username, Messages.Message, to_char(Messages.Timestamp AT TIME ZONE 'PST', 'MM-DD-YY HH12:MI:SS AM' ) AS Timestamp, Messages.HasBeenRead FROM Messages INNER JOIN Members ON Messages.MemberId=Members.MemberId WHERE ChatId=$1 ORDER BY Timestamp DESC`;

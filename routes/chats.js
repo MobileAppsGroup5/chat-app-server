@@ -28,7 +28,7 @@ router.post("/submitRequest", (req, res) => {
           db.one(`INSERT INTO Chats(Name) VALUES ($1) RETURNING chatid`, [chatName])
             .then((row) => {
               // Assign the two people to chatMembers of the chat
-              db.none(`INSERT INTO ChatMembers(ChatID, MemberID, Accepted) VALUES ($1, $2, 1), ($1, $3, 0)`, [row.chatid, fromRow.memberid, toRow.memberid])
+              db.none(`INSERT INTO ChatMembers(chatid, MemberID, Accepted) VALUES ($1, $2, 1), ($1, $3, 0)`, [row.chatid, fromRow.memberid, toRow.memberid])
                 .then(() => {
                   res.send({
                     success: true,
@@ -69,6 +69,7 @@ router.post("/submitRequest", (req, res) => {
 router.post("/acceptRequest", (req, res) => {
   let acceptingUsername = req.body['acceptingUsername'];
   let chatid = req.body['chatid'];
+  
   if (!acceptingUsername || !chatid) {
     res.send({
       success: false,
@@ -104,57 +105,45 @@ router.post("/acceptRequest", (req, res) => {
     })
 })
 
-// Add a user to a chat
-router.post("/addUserToChat", (req, res) => {
-  let username = req.body['username'];
-  let chatid = req.body['chatId'];
-
-  if (!username || !chatid) {
+router.post("/declineCancelOrDeleteRequest", (req, res) => {
+  let chatid = req.body['chatid'];
+  if (!chatid) {
     res.send({
       success: false,
-      error: "username or chatid not supplied"
+      error: "chatid not supplied"
     });
     return;
   }
 
-  // Get member ids for the given usernames
-  db.many(`SELECT memberid FROM members WHERE username=$1`, [username])
-    .then((rows) => {
-      // Insert chat into chats
-      db.one(`select * from chats where chatid=$1`, [chatid])
-        .then((row) => {
-          // Assign the two people to chatMembers of the chat
-          db.none(`INSERT INTO ChatMembers(ChatID, MemberID) VALUES ($1, $2)`, [row.chatid, rows[0].memberid])
-            .then(() => {
-              res.send({
-                success: true,
-                message: 'Member successfully added!',
-              })
-              return;
-            }).catch((err) => {
-              res.send({
-                success: false,
-                error: 'Failed to assign users to chatroom ' + err,
-              });
-              return;
-            })
+  // Delete the chat members
+  db.none(`delete from chatmembers where chatid=$1`, [chatid])
+    .then(() => {
+      // Delete the chat
+      db.none(`delete from chats where chatid=$1`, [chatid])
+        .then(() => {
+          res.send({
+            success: true,
+            message: 'successfully destroyed chat',
+            chatid: chatid,
+          })
+          return;
         }).catch((err) => {
           res.send({
             success: false,
-            error: 'Chat room does not exist' + err,
+            error: 'chat does not exist!',
           });
           return;
-        });
+        })
     }).catch((err) => {
       res.send({
         success: false,
-        error: 'Username does not exist ' + err,
+        error: 'chat does not exist!',
       });
       return;
     })
 
-
 });
+
 
 // get all chat rooms
 router.post("/getChats", (req, res) => {
@@ -172,22 +161,22 @@ router.post("/getChats", (req, res) => {
     .then((row) => {
 
       // find the memberid for the given username\
-      db.many('WITH cte AS (SELECT ChatMembers.ChatID\
+      db.many('WITH cte AS (SELECT ChatMembers.chatid\
       FROM ChatMembers INNER JOIN Members ON\
       Members.MemberID=ChatMembers.MemberID\
       WHERE Members.Username=$1)\
-      SELECT Chats.name, Chats.ChatID, json_agg(DISTINCT Members.Username) AS usernames, min(messages.hasbeenread) as hasbeenread, json_agg(chatmembers.accepted) AS acceptedpairs, json_agg((messages.usernamefrom, messages.primarykey)) AS lastSenders\
-      FROM Chats INNER JOIN ChatMembers ON ChatMembers.ChatID=Chats.ChatID INNER JOIN Members ON Members.MemberID=ChatMembers.MemberID LEFT JOIN Messages ON Messages.chatid=chats.chatid\
-      WHERE EXISTS (SELECT 1 FROM cte WHERE ChatID=Chats.ChatID)\
-      GROUP BY Chats.name, Chats.ChatID\
+      SELECT Chats.name, Chats.chatid, json_agg(DISTINCT Members.Username) AS usernames, min(messages.hasbeenread) as hasbeenread, json_agg(chatmembers.accepted) AS acceptedpairs, json_agg((messages.usernamefrom, messages.primarykey)) AS lastSenders\
+      FROM Chats INNER JOIN ChatMembers ON ChatMembers.chatid=Chats.chatid INNER JOIN Members ON Members.MemberID=ChatMembers.MemberID LEFT JOIN Messages ON Messages.chatid=chats.chatid\
+      WHERE EXISTS (SELECT 1 FROM cte WHERE chatid=Chats.chatid)\
+      GROUP BY Chats.name, Chats.chatid\
       ', [username])
         .then((rows) => {
           // db.manyOrNone('select chatmembers.chatid, usernameFrom from members inner join chatmembers on chatmembers.memberid=members.memberid inner join messages on messages.chatid=chatmembers.chatid where messages.memberid=$1  order by messages.primarykey', row.memberid)
           // .then((innerRows) => {
-            res.send({
-              success: true,
-              chats: rows,
-            })
+          res.send({
+            success: true,
+            chats: rows,
+          })
           // }).catch((err) => {
           //   res.send({
           //     success: false,
