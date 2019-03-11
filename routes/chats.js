@@ -31,7 +31,7 @@ router.post("/submitRequest", (req, res) => {
               // Assign the two people to chatMembers of the chat
               db.none(`INSERT INTO ChatMembers(chatid, MemberID, Accepted) VALUES ($1, $2, 1), ($1, $3, 0)`, [row.chatid, fromRow.memberid, toRow.memberid])
                 .then(() => {
-                  db.manyOrNone('select * from push_token where memberid=$1', [toRow.memberId])
+                  db.manyOrNone('select * from push_token where memberid=$1', [toRow.memberid])
                   .then ((token_rows) => {
                     token_rows.forEach(element => {
                       msg_functions.sendChatRoomReqToIndividual(element['token'], usernameFrom, usernameTo, chatName,
