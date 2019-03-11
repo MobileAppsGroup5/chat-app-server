@@ -10,8 +10,8 @@ var nodemailer =require('nodemailer');
 const bodyParser = require("body-parser");
 
 // These two const needed to encrypt the new passwords
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+//const bcrypt = require('bcrypt');
+//const saltRounds = 10;
 
 // allows us to parse the data sent in the webform.
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -56,8 +56,8 @@ router.post('/email', (req, res) => {
         config.secret,{
             expiresIn: '1hr' // expires in 1 hour
         });
-     //   let link = 'http://localhost:5000/forgot/passwordreset' + '?email=' + email + '&token=' + token;
-          let user_pw_reset_url = process.env.PASSWORD_RESET_URL + '?email=' + email + '&token=' + token;
+        let link = 'http://localhost:5000/forgot/passwordreset' + '?email=' + email + '&token=' + token;
+     //     let user_pw_reset_url = process.env.PASSWORD_RESET_URL + '?email=' + email + '&token=' + token;
 
         let email_body = '<!DOCTYPE html><html><title>Let us get you back to CHAPPing it up </title>\
       <head><meta name="viewport" content="width=device-width, initial-scale=1"></head>\
@@ -67,7 +67,7 @@ router.post('/email', (req, res) => {
       No worries, we you got covered! Just click on the verification link below to reset your password. <br>\
       </p><p style="text-align: center;">This will take you to another screen in which you can input a new password. \
       But do it fast because you have t-minus 1 hour before the link expires (security reasons) :).\
-      </p> <p style="text-align: center;"><a href="' + user_pw_reset_url + '">Verification Link</a></p><br><br>\
+      </p> <p style="text-align: center;"><a href="' + link + '">Verification Link</a></p><br><br>\
       <p style="text-align: center;">If you did not request for a new password, please \
      contact us immediately at <a href = "mailto:tcsschapp450@gmail.com">tcsschapp450@gmail.com</ahref></a> </body></html>'
 
@@ -129,36 +129,19 @@ router.post('/resetpassword', urlencodedParser, function (req, res) {
     let email = req.body['email'];
     let newpassword = req.body['newpassword'];
     let confirmpassword = req.body['confirmpassword'];
+    
+    // Check if passwords match
+    if(newpassword == confirmpassword) {
+        let salt = crypto.randomBytes(32).toString("hex");
+        let salted_hash = getHash(newpassword, salt);
 
-    // still need to implement String checks for valid password template
-    if (newpassword === confirmpassword) {
-
-        // generate a salt and hash on separate function calls.
-        bcrypt.genSalt(saltRounds, function(err, salt) {
-            bcrypt.hash(newpassword, salt, function(err, hash) {
-                db.none(`UPDATE Members SET password = $1 WHERE email = $2`, [newpassword, email])
-                .then(() => {
-                    res.sendFile(path.join(__dirname+'/../pages/resetsuccess.html'));
-
-                })
-            });
-        });
-
-        // Compare the hash and password from DB of user.
-  /*      bcrypt.compare(newpassword, hash, function(err, res) {
-            //result == true
-        })  */
-
-        // Never store plaintext passwords. 
-  /*      db.none(`UPDATE Members SET password = $1 WHERE email = $2`, [hash, email])
-        .then(() => {
-            res.sendFile(path.join(__dirname+'/../pages/resetsuccess.html'));
-        
-        })      */
-   }
-}); 
-
-
+        // need to update new salt and password
+        db.none(`UPDATE Members SET password=$1, salt=$2 WHERE email=$3`, [salted_hash, salt, email])
+          .then((row) => {
+              res.sendFile(path.join(__dirname+'/../pages/resetsuccess.html'));
+          })
+    }
+});
 
 
 module.exports = router;
