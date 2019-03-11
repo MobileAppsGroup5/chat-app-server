@@ -93,5 +93,6 @@ function sendChatRoomReqToIndividual(token, from, to, chatName, msg) {
 module.exports = {
   sendToTopic,
   sendMessageToIndividual,
-  sendContactReqToIndividual
+  sendContactReqToIndividual,
+  sendChatRoomReqToIndividual,
 };
