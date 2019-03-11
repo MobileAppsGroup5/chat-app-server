@@ -66,7 +66,7 @@ router.post('/email', (req, res) => {
       <p style="text-align: center;">So you forgot your password, huh? \
       No worries, we you got covered! Just click on the verification link below to reset your password. <br>\
       </p><p style="text-align: center;">This will take you to another screen in which you can input a new password. \
-      But do it fast because you have t-minus 60 minutes before the link expires (security reasons) :).\
+      But do it fast because you have t-minus 1 hour before the link expires (security reasons) :).\
       </p> <p style="text-align: center;"><a href="' + user_pw_reset_url + '">Verification Link</a></p><br><br>\
       <p style="text-align: center;">If you did not request for a new password, please \
      contact us immediately at <a href = "mailto:tcsschapp450@gmail.com">tcsschapp450@gmail.com</ahref></a> </body></html>'
