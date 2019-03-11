@@ -86,7 +86,6 @@ router.post("/acceptRequest", (req, res) => {
     .then((acceptingRow) => {
       db.one(`SELECT memberid FROM members WHERE username=$1`, [requestUsername])
         .then((requestRow) => {
-          console.log(requestRow.memberid + ' ' + acceptingRow.memberid)
           // Insert the req into the table
           db.none(`update contacts set verified=1 where memberid_a=$1 and memberid_b=$2`, [requestRow.memberid, acceptingRow.memberid])
             .then(() => {
@@ -136,8 +135,7 @@ router.post("/declineCancelOrDeleteRequest", (req, res) => {
     .then((decliningRow) => {
       db.one(`SELECT memberid FROM members WHERE username=$1`, [requestUsername])
         .then((requestRow) => {
-          console.log(requestRow.memberid + ' ' + decliningRow.memberid)
-          // Insert the req into the table
+          // Delete the connection
           db.none(`delete from contacts where (memberid_a=$1 AND memberid_b=$2) OR (memberid_a=$2 AND memberid_b=$1)`, [requestRow.memberid, decliningRow.memberid])
             .then(() => {
               res.send({

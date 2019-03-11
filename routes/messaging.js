@@ -21,7 +21,7 @@ router.post("/send", (req, res) => {
     return;
   }
   //add the message to the database
-  let insert = `INSERT INTO Messages(ChatId, Message, MemberId) SELECT $1, $2, MemberId FROM Members WHERE username=$3`
+  let insert = `INSERT INTO Messages(ChatId, Message, MemberId, HasBeenRead, usernamefrom) VALUES ($1, $2, (SELECT MemberId FROM Members WHERE username=$3), 0, $3)`
   db.none(insert, [chatId, message, username])
     .then(() => {
       // send to members in the given chatid
@@ -46,20 +46,40 @@ router.post("/send", (req, res) => {
       });
     });
 });
+
+
 //Get all of the messages from a chat session with id chatid
 router.post("/getAll", (req, res) => {
   let chatId = req.body['chatId'];
+  let username = req.body['username'];
+  if (!chatId || !username) {
+    res.send({
+      success: false,
+      error: "username or chatId not supplied"
+    });
+    return;
+  }
 
-  let query = `SELECT Members.username, Messages.Message, to_char(Messages.Timestamp AT TIME ZONE 'PST', 'MM-DD-YY HH12:MI:SS AM' ) AS Timestamp FROM Messages INNER JOIN Members ON Messages.MemberId=Members.MemberId WHERE ChatId=$1 ORDER BY Timestamp DESC`;
-  db.manyOrNone(query, [chatId])
-    .then((rows) => {
-      res.send({
-        messages: rows
-      })
+  let queryUpdate = 'UPDATE Messages SET HasBeenRead=1 WHERE chatId=$1 AND NOT (memberId=(SELECT memberId FROM Members WHERE username=$2))';
+  let query = `SELECT Members.username, Messages.Message, to_char(Messages.Timestamp AT TIME ZONE 'PST', 'MM-DD-YY HH12:MI:SS AM' ) AS Timestamp, Messages.HasBeenRead FROM Messages INNER JOIN Members ON Messages.MemberId=Members.MemberId WHERE ChatId=$1 ORDER BY Timestamp DESC`;
+  db.manyOrNone(queryUpdate, [chatId, username])
+    .then(() => {
+      //update read messages
+      db.manyOrNone(query, [chatId])
+        .then((rows) => {
+          res.send({
+            messages: rows,
+          })
+        }).catch((err) => {
+          res.send({
+            success: false,
+            error: 'Failed to update messages as READ' + err
+          })
+        });
     }).catch((err) => {
       res.send({
         success: false,
-        error: err
+        error: 'Failed error is: ' + err
       })
     });
 });
