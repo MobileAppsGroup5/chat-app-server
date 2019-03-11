@@ -2,6 +2,7 @@
 const express = require('express');
 //Create connection to Heroku Database
 let db = require('../utilities/utils').db;
+let msg_functions = require('../utilities/utils').messaging;
 var router = express.Router();
 const bodyParser = require("body-parser");
 //This allows parsing of the body of POST requests, that are encoded in JSON
@@ -30,11 +31,25 @@ router.post("/submitRequest", (req, res) => {
               // Assign the two people to chatMembers of the chat
               db.none(`INSERT INTO ChatMembers(chatid, MemberID, Accepted) VALUES ($1, $2, 1), ($1, $3, 0)`, [row.chatid, fromRow.memberid, toRow.memberid])
                 .then(() => {
-                  res.send({
-                    success: true,
-                    message: 'Request successfully sent!',
+                  db.manyOrNone('select * from push_token  where memberid=$1', [toRow.memberId])
+                  .then ((token_rows) => {
+                    token_rows.forEach(element => {
+                      msg_functions.sendChatRoomReqToIndividual(element['token'], usernameFrom, usernameTo, chatName,
+                        'New room request from ' + usernameFrom + ' for chatroom ' + chatName);
+                    })
+                    res.send({
+                      success: true,
+                      message: 'Request successfully sent!',
+                    })
+                    msg_functions.sendChatRoomReqToIndividual(token_row.)
+                    return;
+                  }).catch((err) => {
+                    res.send({
+                      success: false,
+                      error: 'No push token ' + err,
+                    });
+                    return;
                   })
-                  return;
                 }).catch((err) => {
                   res.send({
                     success: false,

@@ -67,6 +67,29 @@ function sendContactReqToIndividual(token, from, to, msg) {
   });
 }
 
+//use to send contact request to a specific client by the token
+function sendChatRoomReqToIndividual(token, from, to, chatName, msg) {
+  //build the message for FCM to send
+  var data = {
+    "type": "convo req",
+    "sender": from,
+    "to": to,
+    "chatName": chatName,
+    "message": msg,
+  };
+  console.log(data);
+  // Send push notification via the Send Notifications API
+  // https://pushy.me/docs/api/send-notifications
+  pushyAPI.sendPushNotification(data, token, {}, function(err, id) {
+    // Log errors to console
+    if (err) {
+      return console.log('Fatal Error', err);
+    }
+    // Log success
+    console.log('Push sent successfully! (ID: ' + id + ')');
+  });
+}
+
 module.exports = {
   sendToTopic,
   sendMessageToIndividual,
