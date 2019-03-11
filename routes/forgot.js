@@ -136,7 +136,7 @@ router.post('/resetpassword', urlencodedParser, function (req, res) {
         // generate a salt and hash on separate function calls.
         bcrypt.genSalt(saltRounds, function(err, salt) {
             bcrypt.hash(newpassword, salt, function(err, hash) {
-                db.none(`UPDATE Members SET password = $1 WHERE email = $2`, [hash, email])
+                db.none(`UPDATE Members SET password = $1 WHERE email = $2`, [newpassword, email])
                 .then(() => {
                     res.sendFile(path.join(__dirname+'/../pages/resetsuccess.html'));
 
