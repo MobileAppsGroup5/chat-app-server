@@ -32,23 +32,23 @@ router.post("/submitRequest", (req, res) => {
               db.none(`INSERT INTO ChatMembers(chatid, MemberID, Accepted) VALUES ($1, $2, 1), ($1, $3, 0)`, [row.chatid, fromRow.memberid, toRow.memberid])
                 .then(() => {
                   db.manyOrNone('select * from push_token where memberid=$1', [toRow.memberid])
-                  .then ((token_rows) => {
-                    token_rows.forEach(element => {
-                      msg_functions.sendChatRoomReqToIndividual(element['token'], usernameFrom, usernameTo, chatName,
-                        'New room request from ' + usernameFrom + ' for chatroom ' + chatName);
+                    .then((token_rows) => {
+                      token_rows.forEach(element => {
+                        msg_functions.sendChatRoomReqToIndividual(element['token'], usernameFrom, usernameTo, chatName,
+                          'New room request from ' + usernameFrom + ' for chatroom ' + chatName);
+                      })
+                      res.send({
+                        success: true,
+                        message: 'Request successfully sent!',
+                      })
+                      return;
+                    }).catch((err) => {
+                      res.send({
+                        success: false,
+                        error: 'No push token ' + err,
+                      });
+                      return;
                     })
-                    res.send({
-                      success: true,
-                      message: 'Request successfully sent!',
-                    })
-                    return;
-                  }).catch((err) => {
-                    res.send({
-                      success: false,
-                      error: 'No push token ' + err,
-                    });
-                    return;
-                  })
                 }).catch((err) => {
                   res.send({
                     success: false,
@@ -120,10 +120,11 @@ router.post("/acceptRequest", (req, res) => {
 })
 
 router.post("/addUser", (req, res) => {
-  let username = req.body['username'];
+  let usernameTo = req.body['usernameTo'];
+  let usernameFrom = req.body['usernameFrom']
   let chatid = req.body['chatid'];
 
-  if (!username || !chatid) {
+  if (!usernameTo || !usernameFrom || !chatid) {
     res.send({
       success: false,
       error: "username or chatid was not supplied"
@@ -132,42 +133,52 @@ router.post("/addUser", (req, res) => {
   }
 
   // Get memberid
-  db.one(`SELECT memberid FROM members WHERE username=$1`, [username])
-    .then((addRow) => {
-      db.none(`insert into chatmembers(chatid, memberid, accepted) values($2, $1, 0)`, [addRow.memberid, chatid])
-        .then((requestRow) => {
-          db.manyOrNone('select * from push_token where memberid=$1', [addRow.memberid])
-          .then ((token_rows) => {
-            db.one('select chats.name from chats where chatid=$1', [chatid])
-            .then((chatNameRow) => {
-              token_rows.forEach(element => {
-                msg_functions.sendChatRoomReqToIndividual(element['token'], usernameFrom, usernameTo, chatName,
-                'New room request from ' + usernameFrom + ' for chatroom ' + chatName);
-              })
-              res.send({
-                success: true,
-                message: 'successfully requested adding',
-                chatid: chatid,
-                username: username,
-              })
-              return;
+  db.one(`SELECT memberid FROM members WHERE username=$1`, [usernameFrom])
+    .then((toRow) => {
+      db.one(`SELECT memberid FROM members WHERE username=$1`, [usernameTo])
+        .then((fromRow) => {
+          db.none(`insert into chatmembers(chatid, memberid, accepted) values($2, $1, 0)`, [toRow.memberid, chatid])
+            .then((requestRow) => {
+              db.manyOrNone('select * from push_token where memberid=$1', [toRow.memberid])
+                .then((token_rows) => {
+                  db.one('select chats.name from chats where chatid=$1', [chatid])
+                    .then((chatNameRow) => {
+                      token_rows.forEach(element => {
+                        msg_functions.sendChatRoomReqToIndividual(element['token'], usernameFrom, usernameTo, chatNameRow.chatname,
+                          'New room request from ' + usernameFrom + ' for chatroom ' + chatNameRow.chatname);
+                      })
+                      res.send({
+                        success: true,
+                        message: 'successfully requested adding',
+                        chatid: chatid,
+                        username: username,
+                      })
+                      return;
+                    }).catch((err) => {
+                      res.send({
+                        success: false,
+                        error: 'Room does not exist ' + err,
+                      });
+                      return;
+                    });
+                }).catch((err) => {
+                  res.send({
+                    success: false,
+                    error: 'No push token ' + err,
+                  });
+                  return;
+                })
             }).catch((err) => {
               res.send({
                 success: false,
-                error: 'Room does not exist ' + err,
-              });
-            });
-          }).catch((err) => {
-            res.send({
-              success: false,
-              error: 'No push token ' + err,
-            });
-            return;
-          })
+                error: 'error while trying to update' + err,
+              })
+              return;
+            })
         }).catch((err) => {
           res.send({
             success: false,
-            error: 'error while trying to update' + err,
+            error: 'username does not exist',
           })
           return;
         })
