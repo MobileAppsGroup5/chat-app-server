@@ -117,7 +117,6 @@ router.post("/save", (req, res) => {
     let lon = req.body['lon'];
     let zip = req.body['zip'];
     if (username && city && (lat && lon) || zip) {
-        var params = [username, city, lat, lon, zip];
         //get the user
         db.one("SELECT memberid FROM members WHERE username=$1", [username])
             .then((row) => {
@@ -228,17 +227,26 @@ router.post("/delete", (req, res) => {
     }
     db.one("SELECT MemberId FROM Members WHERE username=$1", [username])
         .then((row) => {
-            db.none("DELETE FROM Locations WHERE Locations.nickname=$1 AND Locations.memberid=$2", [city, row.memberid])
-                .then(() => {
-                    res.send({
-                        success: true
-                    });
+            db.one("SELECT nickname FROM locations WHERE nickname=$1 AND memberid=$2", [city, row.memberid])
+                .then((row2) => {
+                    db.none("DELETE FROM Locations WHERE Locations.nickname=$1 AND Locations.memberid=$2", [city, row.memberid])
+                        .then(() => {
+                            res.send({
+                                success: true
+                            });
+                        }).catch((err) => {
+                            res.send({
+                                success: false,
+                                err: err
+                            });
+                        });
                 }).catch((err) => {
                     res.send({
                         success: false,
-                        err: err
+                        err: "city doesnt exist"
                     });
                 });
+            
         }).catch((err) => {
             res.send({
                 success: false,
