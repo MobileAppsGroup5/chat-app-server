@@ -151,7 +151,7 @@ router.post("/addUser", (req, res) => {
                         success: true,
                         message: 'successfully requested adding',
                         chatid: chatid,
-                        username: username,
+                        username: usernameTo,
                       })
                       return;
                     }).catch((err) => {
