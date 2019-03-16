@@ -133,9 +133,9 @@ router.post("/addUser", (req, res) => {
   }
 
   // Get memberid
-  db.one(`SELECT memberid FROM members WHERE username=$1`, [usernameFrom])
+  db.one(`SELECT memberid FROM members WHERE username=$1`, [usernameTo])
     .then((toRow) => {
-      db.one(`SELECT memberid FROM members WHERE username=$1`, [usernameTo])
+      db.one(`SELECT memberid FROM members WHERE username=$1`, [usernameFrom])
         .then((fromRow) => {
           db.none(`insert into chatmembers(chatid, memberid, accepted) values($2, $1, 0)`, [toRow.memberid, chatid])
             .then((requestRow) => {
@@ -145,7 +145,7 @@ router.post("/addUser", (req, res) => {
                     .then((chatNameRow) => {
                       token_rows.forEach(element => {
                         msg_functions.sendChatRoomReqToIndividual(element['token'], usernameFrom, usernameTo, chatNameRow.chatname,
-                          'New room request from ' + usernameFrom + ' for chatroom ' + chatNameRow.chatname);
+                          'New room request from ' + usernameFrom + ' for chatroom ' + chatNameRow.name);
                       })
                       res.send({
                         success: true,
